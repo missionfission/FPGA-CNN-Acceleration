@@ -104,8 +104,7 @@ L_LAYERS:
     int input_offset =
         ((long)SHARED_DRAM_DATA - (long)SHARED_DRAM) / sizeof(data_t);
     numfilterelems_t weights_per_filter = (layer.kernel == 3) ? 9 : 1;
-    weightaddr_t num_weights =
-        layer.channels_in * layer.channels_out * weights_per_filter;
+    weightaddr_t num_weights = layer.channels_in * layer.channels_out * weights_per_filter;
 
     // Print some Info on this Layer
     printf("CPU: Offload CONV Layer ");
@@ -114,8 +113,7 @@ L_LAYERS:
     printf("Entering FPGA \n");
     fflush(stdout);
     // Offload Layer Calculation to FPGA
-    fpga_top(layer, (data_t *)SHARED_DRAM, weights_offset, num_weights,
-             input_offset);
+    fpga_top(layer, (data_t *)SHARED_DRAM, weights_offset, num_weights, input_offset);
 
     LOG_LEVEL_DECR;
   }
@@ -126,8 +124,8 @@ L_LAYERS:
   // = Copy Results back from FPGA =
   // ===============================
   layer_t *final = &net_CPU->layers[net_CPU->num_layers - 1];
-//  int ch_out = (final->is_second_split_layer ? 2 : 1) * final->channels_out;
-   int ch_out=final->channels_out;
+  int ch_out = (final->is_second_split_layer ? 2 : 1) * final->channels_out;
+  //int ch_out=final->channels_out;
    data_t *results = (data_t *)malloc(ch_out * sizeof(data_t));
   copy_results_from_FPGA(net_CPU, results, ch_out);
 
@@ -162,10 +160,6 @@ L_LAYERS:
 //    return -1;
 //  }
 }
-
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-
 // ==============================================
 // = Allocate Memory Regions for Data + Weights =
 // ==============================================
@@ -209,8 +203,7 @@ void allocate_FPGA_memory(network_t *net_CPU) {
   printf("CPU: FPGA DRAM Memory Allocation:\n");
   printf("     Bytes allocated: %dB (config) + %dKB (weights) + %dKB (data)\n",
          0, weightsize / 1024, datasize / 1024);
-  printf("     region: %lu – %lu\n", (long)SHARED_DRAM,
-         (long)(SHARED_DRAM + total_size));
+  printf("     region: %lu – %lu\n", (long)SHARED_DRAM, (long)(SHARED_DRAM + total_size));
 //
 //  if (DRAM_DEPTH != (int)(total_size / sizeof(data_t))) {
 //    printf("\n\n!! ERROR !!\n");
@@ -335,7 +328,7 @@ void calculate_softmax(network_t *net_CPU, data_t *results,
   std::vector<data_t> exponentials(ch_out);
   for (int i = 0; i < ch_out; i++) {
     // Subtract Maximum ("normalize"), then calculate e^()
-    exponentials[i] = exp(results[i] - maxresult);
+    exponentials[i] = std::exp(results[i] - maxresult);
     // Accumulate Sum of Exponentials
     expsum += exponentials[i];
   }
@@ -382,7 +375,7 @@ void generate_random_input_image(data_t *input_image, int win, int hin,
 
   // Enable for real randomness: (time() updates every second)
   if (seed == -1) {
-    srand(time(NULL));
+	  srand(time(NULL));
   } else {
     srand(seed);
   }
@@ -433,10 +426,8 @@ void setup_FPGA(network_t *net_CPU) {
   printf("\n\nCPU: Network Setup:\n=====================\n\n");
   print_layers(net_CPU);
   printf("\n");
-
   // Setup FPGA DRAM Memory (Config, Weights, Data Sections)
   allocate_FPGA_memory(net_CPU);
-
   // Copy Network Config (Layer Config, Weights)
   copy_config_to_FPGA(net_CPU);
 }

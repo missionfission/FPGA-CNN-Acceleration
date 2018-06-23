@@ -8,7 +8,7 @@
 
 #include "network.hpp"
 network_t *get_network_config() {
-  network_t *net = new network_t(15, 40000);
+  network_t *net = new network_t(13, 40000);
 
   // Layer Attributes: ( NAME   ,   W,   H,   CI,  CO, K, P, S, R, S1, S2, FP)
   addLayer(net, layer_t("c1    ",  16,   16,    3,  64, 3, 1, 2, 1,  0,  0,  0));
@@ -24,7 +24,7 @@ network_t *get_network_config() {
   addLayer(net, layer_t("f5/s1 ",   8,   8,  256,  32, 1, 0, 1, 1,  0,  0,  0));
   addLayer(net, layer_t("f5/e1 ",   8,   8,   32, 128, 1, 0, 1, 1,  1,  0,  0));
   addLayer(net, layer_t("f5/e3 ",   8,   8,   32, 128, 3, 1, 1, 1,  0,  1,  0));
-  //addLayer(net, layer_t("dense ",   0,   0,   16384, 2, 0, 0, 0, 0,  0,  0,  0));
+  addLayer(net, layer_t("dense ",   0,   0,   16384, 2, 0, 0, 0, 0,  0,  0,  0));
 
   net->num_weights = 120416;
   const char* filename = "weights_malaria.bin";

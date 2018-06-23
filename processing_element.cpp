@@ -43,9 +43,6 @@ void ProcessingElement::processInputChannel(const coordinate_t y,
                                             const channel_t ch_out) {
 #pragma HLS inline off
 #pragma HLS FUNCTION_INSTANTIATE variable = ci_in
-
-//#pragma HLS dataflow
-
   channel_t ci = ci_in;
   weightaddr_t ci_offset;
   data_t pixel_buffer[9];
@@ -63,23 +60,21 @@ void ProcessingElement::processInputChannel(const coordinate_t y,
   LOG_LEVEL_DECR;
 }
 
-void ProcessingElement::processAllCHout(const channel_t ch_out,
-                                        const channel_t ci,
-                                        const weightaddr_t ci_offset,
+void ProcessingElement::processAllCHout(const channel_t ch_out, const channel_t ci, const weightaddr_t ci_offset,
                                         const data_t pixels[9]) {
 #pragma HLS INLINE off
 
-  //#pragma HLS INTERFACE ap_fifo register port=ch_out
-  //#pragma HLS INTERFACE ap_fifo register port=ci
-  //#pragma HLS INTERFACE ap_fifo register port=ci_offset_divN_PE
-  //#pragma HLS INTERFACE ap_fifo register port=pixels
+//#pragma HLS INTERFACE ap_fifo register port=ch_out
+//#pragma HLS INTERFACE ap_fifo register port=ci
+//#pragma HLS INTERFACE ap_fifo register port=ci_offset_divN_PE
+//#pragma HLS INTERFACE ap_fifo register port=pixels
 
-  LOG("PE: processAllCHout\n");
-  LOG_LEVEL_INCR;
+LOG("PE: processAllCHout\n");
+LOG_LEVEL_INCR;
 
 L_CH_OUT:
   for (channel_t co = 0; co < ch_out; co++) {
-#pragma HLS LOOP_TRIPCOUNT min = 16 max = 1024 avg = 258
+#pragma HLS LOOP_TRIPCOUNT min = 16 max = 128
 #pragma HLS unroll factor = N_PE
 #pragma HLS PIPELINE II = 1
 

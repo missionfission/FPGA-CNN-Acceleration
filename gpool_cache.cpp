@@ -34,8 +34,7 @@ void GPoolCache::accumulateChannel(channel_t co, data_t value_to_add) {
   data_t old_ch = GBRAM[co];
   data_t new_ch = old_ch + value_to_add;
   GBRAM[co] = new_ch;
-  LOG("GPoolCache: accumulateChannel( ch%-2d ) add %+.2f -> %.2f\n", (int)co,
-      value_to_add, new_ch);
+  LOG("GPoolCache: accumulateChannel( ch%-2d ) add %+.2f -> %.2f\n", (int)co, value_to_add, new_ch);
 };
 
 data_t GPoolCache::getChannel(channel_t c) {
