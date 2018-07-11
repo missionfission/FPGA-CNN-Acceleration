@@ -1,14 +1,6 @@
 //------------------------------------------------------------------------------
 //  SqueezeNetOnFPGA
-//------------------------------------------------------------------------------
-//
-//	File:  processing_element.cpp
-//
-//  Processing (MACC) Module for FPGA
-//
-//	(c) David Gschwend, 2016
-//
-//------------------------------------------------------------------------------
+
 
 #include "processing_element.hpp"
 
@@ -63,10 +55,10 @@ void ProcessingElement::processInputChannel(const coordinate_t y,
 void ProcessingElement::processAllCHout(const channel_t ch_out, const channel_t ci, const weightaddr_t ci_offset,
                                         const data_t pixels[9]) {
 #pragma HLS INLINE off
-
+//
 //#pragma HLS INTERFACE ap_fifo register port=ch_out
 //#pragma HLS INTERFACE ap_fifo register port=ci
-//#pragma HLS INTERFACE ap_fifo register port=ci_offset_divN_PE
+//#pragma HLS INTERFACE ap_fifo register port=ci_offset
 //#pragma HLS INTERFACE ap_fifo register port=pixels
 
 LOG("PE: processAllCHout\n");
@@ -74,7 +66,7 @@ LOG_LEVEL_INCR;
 
 L_CH_OUT:
   for (channel_t co = 0; co < ch_out; co++) {
-#pragma HLS LOOP_TRIPCOUNT min = 16 max = 128
+#pragma HLSs LOOP_TRIPCOUNT min = 16 max = 256
 #pragma HLS unroll factor = N_PE
 #pragma HLS PIPELINE II = 1
 

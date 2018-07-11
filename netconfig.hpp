@@ -1,14 +1,7 @@
 //------------------------------------------------------------------------------
 //  SqueezeNetOnFPGA
 //------------------------------------------------------------------------------
-//
-//	File:  netconfig.hpp
-//
-//  Declaration of <layer_t> and <network_t> structs that hold configuration.
-//
-//	(c) David Gschwend, 2016
-//
-//------------------------------------------------------------------------------
+
 
 #ifndef _NETCONFIG_H_
 #define _NETCONFIG_H_
@@ -142,26 +135,7 @@ struct network_t {
 // =========================================
 void print_layers(network_t *net);
 void print_layer(layer_t *layer);
-
-// ==============================
-// = Add Layer to given Network =
-// ==============================
-// Assumes that Network has been allocated with enough memory (not checked!)
-// If update_memory_address==true, advances layer's memory addresses for input
-//    and output memories and weights
-// If is_expand_layer==true, reserves double amount of output memory to allow
-//    implicit out-channel concatenation (use for expand1x1 layer)
-// If is_expand_layer==true and update_memory_address==false, uses same input
-//    memory address as in last layer, and only slightly shifted output address
-//    (use for expand3x3 layer)
-// Use POOL_TYPE = POOL_GLOBAL in last layer to sum over spatial dimension
-//    (output becomes 1x1xCH_OUT)
 void addLayer(network_t *net, layer_t layer);
-
-// =================================
-// = Load Weights from Binary File =
-// =================================
-// prepare with convert_caffemodel.py
 void loadWeightsFromFile(network_t *net, const char *filename);
 
 #endif

@@ -1,7 +1,9 @@
+#include "weights_cache.hpp"
+#include "image_cache.hpp"
+#include "output_cache.hpp"
+#include "fpga_top.hpp"
 
-
-
-#include<maxpool.hpp>
+//#include<"maxpool".hpp>
 
 void maxpool(data_t * in, layer_t layer) {
 	int i,j,c,ii,jj;

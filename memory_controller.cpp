@@ -1,14 +1,6 @@
 //------------------------------------------------------------------------------
 //  SqueezeNetOnFPGA
-//------------------------------------------------------------------------------
-//
-//	File:  memory_controller.cpp
-//
-//  Memory Controller Module for FPGA (connects to AXI_M bus --> DMA)
-//
-//	(c) David Gschwend, 2016
-//
-//------------------------------------------------------------------------------
+
 
 #include "memory_controller.hpp"
 
@@ -89,7 +81,9 @@ void MemoryController::setPixelLoadRow(coordinate_t y) {
 data_t MemoryController::loadNextChannel(data_t* SHARED_DRAM) {
 #pragma HLS inline
 #pragma HLS pipeline II=1
+//  data_t pixel_from_ram = reg(SHARED_DRAM[dram_data_offset + layer_pixel_offset]);
   data_t pixel_from_ram = reg(SHARED_DRAM[dram_data_offset + layer_pixel_offset]);
+
   if (LOG_DETAILS)
     LOG("MemoryCtrl: loadNextChannel (from DRAM @%4luB) -> %.2f\n",
         (int)layer_pixel_offset * sizeof(data_t), pixel_from_ram);

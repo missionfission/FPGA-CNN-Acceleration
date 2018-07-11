@@ -32,7 +32,7 @@
 // Number of Image Cache Lines (need 3, use 4 for simplified Addressing HW)
 const int NUM_IMG_CACHE_LINES = 4;
 // Number of Processing Elements
-const int N_PE = 8;
+const int N_PE = 4;
 
 // ====================
 // = Type Definitions =

@@ -45,24 +45,7 @@ int main() {
   // Generate + Load Network Config from network.hpp/network.cpp
   network_t *net_CPU;
   net_CPU = get_network_config();
-
-  // Assert that layer_t fits into a multiple of bus transactions:
-  // ONLY NECESSARY IF WE CAN MAP LAYER_T TRANSFER ONTO BUS_T AXI MASTER
-  // printf("size of layer_t: %d, size of bus_t: %d", (int)sizeof(layer_t),
-  //       (int)sizeof(bus_t));
-  // assert((sizeof(layer_t) % sizeof(bus_t) == 0) &&
-  //       "layert_t is not multiple of bus size. adjust size of
-  //       layer_t.dummy!");
-
-  // ==========================
-  // = Setup FPGA Accelerator =
-  // ==========================
-  // Allocate Shared Memory for Config, Weights, Data.
-  // Copy Layer Config + Weights to FPGA.
   setup_FPGA(net_CPU);
-
-
-
   // Allocate Memory on CPU Side:
   layer_t layer0 = net_CPU->layers[0];
   int win = layer0.width;
@@ -116,7 +99,7 @@ L_LAYERS:
   int ch_out = (final->is_second_split_layer ? 2 : 1) * final->channels_out;
   //int ch_out=final->channels_out;
    data_t *results = (data_t *)malloc(ch_out * sizeof(data_t));
-  copy_results_from_FPGA(net_CPU, results, ch_out);
+//  copy_results_from_FPGA(net_CPU, results, ch_out);
 
   return 0;
 

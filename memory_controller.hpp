@@ -1,14 +1,7 @@
 //------------------------------------------------------------------------------
 //  SqueezeNetOnFPGA
 //------------------------------------------------------------------------------
-//
-//	File:  memory_controller.hpp
-//
-//  Memory Controller Module for FPGA (connects to AXI_M bus --> DMA)
-//
-//	(c) David Gschwend, 2016
-//
-//------------------------------------------------------------------------------
+
 
 #ifndef MEMORY_CONTROLLER_HPP_EBD6F5A3
 #define MEMORY_CONTROLLER_HPP_EBD6F5A3

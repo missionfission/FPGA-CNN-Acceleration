@@ -1,18 +1,4 @@
-//------------------------------------------------------------------------------
-//  SqueezeNetOnFPGA
-//------------------------------------------------------------------------------
-//
-//	File:  fpga_top.cpp
-//
-//  Top-Level Module for SqueezeNetOnFGPA.
-//
-//	(c) David Gschwend, 2016
-//
-//------------------------------------------------------------------------------
-
 #include "fpga_top.hpp"
-
-// FPGA Modules
 #include "memory_controller.hpp"
 #include "image_cache.hpp"
 #include "weights_cache.hpp"
