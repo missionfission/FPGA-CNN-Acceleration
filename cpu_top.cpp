@@ -22,8 +22,7 @@ float *SHARED_DRAM_LAYER_CONFIG;
 data_t *SHARED_DRAM_WEIGHTS;
 data_t *SHARED_DRAM_DATA;
 
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
+
 
 // =================
 // = Main Function =
@@ -62,17 +61,7 @@ int main() {
   // Copy Layer Config + Weights to FPGA.
   setup_FPGA(net_CPU);
 
-  // ===========================
-  // = Load + Copy Input Image =
-  // ===========================
-  /* Structured: generate_structured_input_image(input_image,win,hin,chin);
-   PseudoRandom: generate_random_input_image(input_image, win, hin, chin, 1);
-   ReallyRandom: generate_random_input_image(input_image, win, hin, chin -1);
-   Prepared Input File (convert_image.py):
-   load_prepared_input_image(input_image, "./indata.bin", win, hin, chin);
-   JPG/PNG Input File (!not implemented!):
-   load_image_file(input_image, "./puppy-500x350.jpg", win, hin, chin);
-   do_preprocess(input_image, win, hin, chin); */
+
 
   // Allocate Memory on CPU Side:
   layer_t layer0 = net_CPU->layers[0];
@@ -129,36 +118,8 @@ L_LAYERS:
    data_t *results = (data_t *)malloc(ch_out * sizeof(data_t));
   copy_results_from_FPGA(net_CPU, results, ch_out);
 
-  // =====================
-  // = Calculate Softmax =
-  // =====================
-  std::vector<std::pair<data_t, int> > probabilities(ch_out);
-  calculate_softmax(net_CPU, results, probabilities);
-
-  // ==================
-  // = Report Results =
-  // ==================
-//  printf("\nResult (top-5):\n====================\n");
-//  for (int i = 0; i < std::min(5, ch_out); i++) {
-//    printf("    %5.2f%%: class %3d (output %6.2f)\n",
-//           100 * probabilities[i].first, probabilities[i].second,
-//           results[probabilities[i].second]);
-//  }
-
-  // ====================
-  // = TestBench Result =
-  // ====================
-  // Check if output is AS EXPECTED (+- 0.5%) (defined in network.hpp)
   return 0;
-//  if (fabs(100 * probabilities[0].first - TEST_RESULT_EXPECTED) < 0.1) {
-//    printf("\nTestBench Result: SUCCESS\n");
-//    return 0;
-//  } else {
-//    printf("\nTestBench Result: FAILURE\n");
-//    printf("Actual: %5.2f, Expected: %5.2f\n", 100 * probabilities[0].first,
-//           TEST_RESULT_EXPECTED);
-//    return -1;
-//  }
+
 }
 // ==============================================
 // = Allocate Memory Regions for Data + Weights =
@@ -369,18 +330,7 @@ void generate_structured_input_image(data_t *input_image, int win, int hin,
 // Set seed=-1 to shuffle the random generator
 void generate_random_input_image(data_t *input_image, int win, int hin,
                                  int chin, int seed = 1) {
-  // Expected Results:
-  // For seed = 1 [default] and miniFire8UnitFilter, should get result 14154.350
-  // for each class.
-
-  // Enable for real randomness: (time() updates every second)
-  if (seed == -1) {
-	  srand(time(NULL));
-  } else {
-    srand(seed);
-  }
-
-  // RANDOM INPUT
+    // RANDOM INPUT
   // Generate Input Image (pixels between +-1, 3 places after zero)
   for (int x = 0; x < win; x++) {
     for (int y = 0; y < hin; y++) {

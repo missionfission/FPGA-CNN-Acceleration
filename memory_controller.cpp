@@ -45,52 +45,6 @@ void MemoryController::setup(data_t* SHARED_DRAM, unsigned int weights_offset,
   LOG(" - DRAM_DATA       = @%luB\n", (long)dram_data_offset);
 }
 
-/*void MemoryController::loadConfig(int num_layers, layer_t *configBRAM) {
- loadConfigViaFloatUnion(num_layers, configBRAM);
- LOG("MemoryCtrl: loadConfig (%d layers).\n", (int)num_layers);
- }
-
- void MemoryController::loadConfigViaFloatUnion(int num_layers,
- layer_t *configBRAM) {
- // Fetch Layer Configuration by Transferring floats + Converting to layer_t
- float floats[NUM_FLOATS_PER_LAYER];
- layer_t layer;
- L_LoadConfig:
- for (numlayers_t l = 0; l < num_layers; l++) {
- #pragma HLS LOOP_TRIPCOUNT min = 26 max = 26 avg = 26
- #pragma HLS pipeline
- memcpy(floats, &SHARED_DRAM[l * NUM_FLOATS_PER_LAYER],
- NUM_FLOATS_PER_LAYER * sizeof(float));
- floatsToLayerT(floats, layer);
- configBRAM[l] = layer;
- }
- }
-
- void MemoryController::floatsToLayerT(float floats[NUM_FLOATS_PER_LAYER],
- layer_t &layer) {
- // Extract layer_t hidden in fake floats (which are actually uint32s)
-
- // clang-format not used on this section to keep it compact
- // clang-format off
- char _undef;
- union { float f; unsigned int i;} u;
- //layer.type = LAYER_NONE;  // type not used
- for (int i = 0; i < NET_NAME_MAX_LEN; i++)
- layer.name[i] = _undef;
- u.f = floats[0]; layer.width = u.i;
- u.f = floats[1]; layer.height = u.i;
- u.f = floats[2]; layer.channels_in = u.i;
- u.f = floats[3]; layer.channels_out = u.i;
- u.f = floats[4]; layer.kernel = u.i;
- u.f = floats[5]; layer.stride = u.i;
- u.f = floats[6]; layer.pad = u.i;
- u.f = floats[7]; layer.mem_addr_input = u.i;
- u.f = floats[8]; layer.mem_addr_output = u.i;
- u.f = floats[9]; layer.mem_addr_weights = u.i;
- u.f = floats[10]; layer.is_expand_layer = u.i;
- u.f = floats[11]; layer.pool = (u.i == 1 ? POOL_GLOBAL : POOL_NONE);
- // clang-format on
- }*/
 
 void MemoryController::setLayerConfig(layer_t& layer) {
   layer_weights_offset = layer.mem_addr_weights;

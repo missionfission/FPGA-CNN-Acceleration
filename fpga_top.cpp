@@ -122,7 +122,6 @@ L_Y:
     // Input Channel Loop
     L_CH_IN:
       for (ci = 0; ci < layer.channels_in; ci++) {
-//#pragma HLS LOOP_TRIPCOUNT min = 3 max = 1024 avg = 237
 #pragma HLS LOOP_TRIPCOUNT min = 3 max = 64
 
         LOG("CI = %d:\n", (int)ci);

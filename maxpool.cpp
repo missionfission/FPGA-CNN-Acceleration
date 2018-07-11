@@ -3,7 +3,7 @@
 
 #include<maxpool.hpp>
 
-void max_pool(data_t * in, layer_t layer) {
+void maxpool(data_t * in, layer_t layer) {
 	int i,j,c,ii,jj;
 	//pooling_t params = l.pool_params;
 
