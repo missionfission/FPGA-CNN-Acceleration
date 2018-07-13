@@ -17,8 +17,7 @@
 namespace ProcessingElement {
 
   void setLayerConfig(const layer_t layer);
-  void processInputChannel(const coordinate_t y, const coordinate_t x,
-                           const channel_t ci, const channel_t ch_out);
+  void processInputChannel(const coordinate_t y, const coordinate_t x,const channel_t ci, const channel_t ch_out);
   data_t postprocess(const channel_t co, const weightaddr_t ci_offset);
 
   void preloadPixelsAndPrecalcCIoffset(const coordinate_t y,

@@ -144,9 +144,8 @@ void WeightsCache::setLayerConfig(const layer_t &layer,
   LOG(" - num_weights     = %d\n", (int)num_weights);
 }
 
-void WeightsCache::getNineWeights(const channel_t co,
-                                  const weightaddr_t ci_offset,
-                                  data_t weights_buf[9]) {
+void WeightsCache::getNineWeights(const channel_t co,const weightaddr_t ci_offset,data_t weights_buf[9])
+{
 #pragma HLS FUNCTION_INSTANTIATE variable = co
 #pragma HLS inline
 

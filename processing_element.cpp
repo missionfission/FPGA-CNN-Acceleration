@@ -29,10 +29,8 @@ void ProcessingElement::setLayerConfig(const layer_t layer) {
   // }
 }
 
-void ProcessingElement::processInputChannel(const coordinate_t y,
-                                            const coordinate_t x,
-                                            const channel_t ci_in,
-                                            const channel_t ch_out) {
+void ProcessingElement::processInputChannel(const coordinate_t y,const coordinate_t x,const channel_t ci_in,
+		const channel_t ch_out) {
 #pragma HLS inline off
 #pragma HLS FUNCTION_INSTANTIATE variable = ci_in
   channel_t ci = ci_in;

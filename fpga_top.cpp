@@ -135,8 +135,7 @@ L_Y:
       LOG_LEVEL_INCR;
       // Select bias coefficients
       // WCache.setInputChannel(layer.channels_in, layer.channels_out);
-      weightaddr_t ci_offset =
-          WeightsCache::precalcInputOffset(layer.channels_in);
+      weightaddr_t ci_offset = WeightsCache::precalcInputOffset(layer.channels_in);
 
 
     L_POSTPROCESS:
