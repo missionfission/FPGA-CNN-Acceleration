@@ -129,7 +129,7 @@ data_t ImageCache::getPixel(const coordinate_t y, const imgcacheaddr_t y_offset,
 
 	bool is_padding_pixel = x < 0 | x >= width_in | y < 0 | y >= height_in;
 
-	data_t px = is_padding_pixel ? 0.0f : IBRAM[addr];
+	data_t px = is_padding_pixel ? (data_t)0 : IBRAM[addr];
 
 	LOG("ImageCache: getPixel( y: %d, x: %d, ci: %d ) %s -> %.2f\n", (int)y,
 			(int)x, (int)ci, is_padding_pixel ? "PAD" : "", px);

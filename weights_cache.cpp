@@ -174,7 +174,7 @@ L_getNineWeights:
     // Fetch all 9 elements in last dimension into registers (weights_temp)
     weights_temp[i] = WBRAM_BLOCK[i];
     // Fill weights_buf with 0.0f for 1x1 kernel / with weights for 3x3 kernel
-    weights_buf[i] = (kernel == 1) ? 0.0f : weights_temp[i];
+    weights_buf[i] = (kernel == 1) ? (data_t)0 : weights_temp[i];
   }
 
   // Fill single relevant weight into weights_buf for 1x1 kernel

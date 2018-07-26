@@ -19,11 +19,6 @@
 //
 //const int DRAM_DEPTH = 11865152;
 //const float TEST_RESULT_EXPECTED = 88.38;//
-
-
-
-
-
 const int MAX_NUM_LAYERS = 15;
 const int MAX_WEIGHTS_PER_LAYER = 36992*2;
 const int MAX_IMAGE_CACHE_SIZE = 1024*2;
@@ -33,9 +28,8 @@ const int MAX_DIMENSION = 16;
 const int MAX_CHANNELS = 256;
 
 const int TOTAL_NUM_WEIGHTS = 153186;
-const int TOTAL_NUM_INPUTS = 3661824;
-const int TOTAL_NUM_OUTPUTS = 3239936;
-const int TOTAL_DRAM_IO = 9430560;
+
+
 
 const int DRAM_DEPTH = 11000;
 //const float TEST_RESULT_EXPECTED = 88.38;

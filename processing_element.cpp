@@ -18,15 +18,6 @@ bool ProcessingElement::relu;
 void ProcessingElement::setLayerConfig(const layer_t layer) {
   kernel = layer.kernel;
   relu = layer.relu;
-  // ch_out = layer.channels_out;
-  // this->ch_in = chin;
-
-  // if (LOG_DETAILS) {
-  //     LOG("PE: setLayerConfig\n");
-  //     LOG(" - kernel   = %d\n", (int)kernel);
-  //     LOG(" - ch_out   = %d\n", (int)ch_out);
-  //     LOG(" - ch_in    = %d\n", (int)ch_in);
-  // }
 }
 
 void ProcessingElement::processInputChannel(const coordinate_t y,const coordinate_t x,const channel_t ci_in,
@@ -179,7 +170,7 @@ data_t ProcessingElement::postprocess(const channel_t co,
   // Add Bias
   biased = raw + WeightsCache::getOneWeight(co, ci_offset);
   // Nonlinearity: ReLU
-  rectified = (biased < 0) ? 0.0f : biased;
+  rectified = (biased < 0) ? (data_t)0 : biased;
 
   // ReLU needed?
   result = relu ? rectified : biased;

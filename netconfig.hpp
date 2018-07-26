@@ -44,7 +44,7 @@ typedef ap_uint<23> memaddr_t;  // must remain <= 23 bits to fit into float
 typedef ap_uint<2> kernel_t;    // =1 or =3
 typedef ap_uint<2> stride_t;    // =1 or =2
 typedef ap_uint<4> numfilterelems_t;  // either =1 or =9
-typedef float data_t;
+typedef ap_fixed<16,4> data_t;
 
 // ==================
 // = Struct LAYER_T =
@@ -126,7 +126,7 @@ struct network_t {
   network_t(int max_layers, int max_weights)
       : num_layers(0), num_weights(0), total_pixel_mem(0) {
     layers = (layer_t *)malloc((sizeof(layer_t)) * max_layers);
-    weights = (float *)malloc((sizeof(float)) * max_weights);
+    weights = (data_t *)malloc((sizeof(data_t)) * max_weights);
   }
 };
 
