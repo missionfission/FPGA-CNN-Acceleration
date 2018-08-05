@@ -1,21 +1,43 @@
+//------------------------------------------------------------------------------
+//  SqueezeNetOnFPGA
+//------------------------------------------------------------------------------
+//
+//	File:  cpu_top.hpp
+//
+//  CPU-Side Functions for SqueezeNetOnFPGA
+//------------------------------------------------------------------------------
+
 #ifndef _FPGA_SIMULATOR_H_
 #define _FPGA_SIMULATOR_H_
 
-#include <cstdio>     
-#include <ctime>     
-#include <cmath>      
-#include <vector>   
-#include <algorithm>  
+// ========================
+// = Standard C Libraries =
+// ========================
+#include <cstdio>     // printf
+#include <ctime>      // time() for random seed
+#include <cmath>      // fabs, fmax, ...
+#include <vector>     // std::vector for softmax calculation
+#include <algorithm>  // sort, reverse (on std::vector)
 
+// ===========================
+// = CNN Network Definitions =
+// ===========================
 #include "network.hpp"    // load before netconfig.hpp for bit-width calculation
 #include "netconfig.hpp"  // network config (layer_t, network_t)
 
+// ==============
+// = Unit Tests =
+// ==============
 #include "unittests.hpp"  // Unit Tests for Modules
 
+// ==================
+// = FPGA Algorithm =
+// ==================
 #include "fpga_top.hpp"  // top-level FPGA module
 
-
-
+// ===========================================
+// = CPU-Side Functions for SqueezeNetOnFPGA =
+// ===========================================
 void allocate_FPGA_memory(network_t *net_CPU);
 void copy_config_to_FPGA(network_t *net_CPU);
 void load_prepared_input_image(data_t *input_image, const char *filename,
@@ -34,10 +56,12 @@ void do_preprocess(data_t *input_image, int win, int hin, int chin);
 void setup_FPGA(network_t *net_CPU);
 int main();
 
-
+// ================================
+// = Debugging Output (Helper Fn) =
+// ================================
+// debug mode, -DEBUG
 extern int LOG_LEVEL;
 extern bool LOG_DETAILS;
-
 void print_indent(int lvl);
 
 #if defined(EBUG)

@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //  SqueezeNetOnFPGA
-
+//------------------------------------------------------------------------------
 
 #include "weights_cache.hpp"
 
@@ -35,11 +35,8 @@ weightaddr_t ci_times_ch_out = ci * ch_out;
   return ci_times_ch_out;
 }
 
-void WeightsCache::getAddrForSingleWeight(const channel_t co,
-                                          const weightaddr_t ci_offset,
-                                          PEID_t &PEID, blockID_t &blockID,
-                                          rowID_t &rowID,
-                                          weightID_t &weightID) {
+void WeightsCache::getAddrForSingleWeight(const channel_t co, const weightaddr_t ci_offset,PEID_t &PEID, blockID_t &blockID,
+                                          rowID_t &rowID,weightID_t &weightID) {
 #pragma HLS INLINE
 
   if (kernel == 3) {
@@ -48,8 +45,7 @@ void WeightsCache::getAddrForSingleWeight(const channel_t co,
     blockID = (((ci_offset + co) / N_PE)) / BLOCK_SIZE;
     rowID = (((ci_offset + co) / N_PE)) % BLOCK_SIZE;
     weightID = 0;
-  } else {  // kernel == 1
-    // ci_offset = ci * ch_out
+  } else { 
     PEID = co % N_PE;
     blockID = (((ci_offset + co) / N_PE) / 8) / BLOCK_SIZE;
     rowID = (((ci_offset + co) / N_PE) / 8) % BLOCK_SIZE;

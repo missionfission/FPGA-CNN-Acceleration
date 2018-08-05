@@ -1,3 +1,7 @@
+//------------------------------------------------------------------------------
+//  SqueezeNetOnFPGA
+//
+
 #ifndef IMAGE_CACHE_HPP_94D645A0
 #define IMAGE_CACHE_HPP_94D645A0
 
@@ -5,6 +9,10 @@
 #include "fpga_top.hpp"
 
 #include "memory_controller.hpp"
+
+// ===============
+// = Image Cache =
+// ===============
 namespace ImageCache {
 
   void reset();
@@ -25,4 +33,4 @@ namespace ImageCache {
   extern channel_t ch_in;
 };
 
-#endif
+#endif /* end of include guard: IMAGE_CACHE_HPP_94D645A0 */

@@ -1,6 +1,8 @@
 #include "cpu_top.hpp"
 
-
+// ======================================
+// = Global Variables (Memory Pointers) =
+// ======================================
 // Pointers to Shared DRAM Memory
 char *SHARED_DRAM;
 // layer_t *SHARED_DRAM_LAYER_CONFIG;
@@ -8,20 +10,28 @@ float *SHARED_DRAM_LAYER_CONFIG;
 data_t *SHARED_DRAM_WEIGHTS;
 data_t *SHARED_DRAM_DATA;
 
+// =================
+// = Main Function =
+// =================
 
 int main() {
   LOG_LEVEL = 0;
 
+  // ==============
+  // = Unit Tests =
+  // ==============
   if (!do_unittests()) {
     printf("UNIT TESTS FAILED, ABORTING.");
     return -1;
   };
 
+  // =================
+  // = Setup Network =
+  // =================
   // Generate + Load Network Config from network.hpp/network.cpp
   network_t *net_CPU;
   net_CPU = get_network_config();
   setup_FPGA(net_CPU);
-
   // Allocate Memory on CPU Side:
   layer_t layer0 = net_CPU->layers[0];
   int win = layer0.width;
@@ -35,7 +45,9 @@ int main() {
   // Copy onto FPGA
   copy_input_image_to_FPGA(net_CPU, input_image);
 
-
+// ============================
+// = Execute FPGA Accelerator =
+// ============================
 
 L_LAYERS:
   for (int layer_id = 0; layer_id < net_CPU->num_layers; layer_id++) {
@@ -78,13 +90,31 @@ L_LAYERS:
   return 0;
 
 }
-
-
-
+// ==============================================
+// = Allocate Memory Regions for Data + Weights =
+// ==============================================
+// Reserve Memory and Assign Pointers
+// DRAM:
+//      ______________
+//     |    weights   |  0
+//     |              |  ...
+//     |______________|  weightsize - 1
+//     |     data     |  weightsize
+//     |  in + output |  ...
+//     |______________|  weightsize + datasize - 1
+//
 void allocate_FPGA_memory(network_t *net_CPU) {
-
+  // For Simulation purposes, allocate space on Heap
+  // For actual HW Implementation, set fixed memory addresses in Shared DRAM
+  // Memory Requirements (Bytes)
   int weightsize = net_CPU->num_weights * sizeof(data_t);
   int datasize = net_CPU->total_pixel_mem * sizeof(data_t);
+
+  // Round memory areas to 32-bit boundaries (4 bytes)
+  // configsize = std::ceil(configsize / 4.0) * 4;
+  //weightsize = ceil(weightsize / 4.0) * 4;
+  //datasize = ceil(datasize / 4.0) * 4;
+
   int total_size = 2*(weightsize + datasize);
 
   // Memory Allocation
@@ -97,28 +127,38 @@ void allocate_FPGA_memory(network_t *net_CPU) {
 
   // Debug: Infos about Memory Regions
   printf("CPU: FPGA DRAM Memory Allocation:\n");
-  printf("Bytes allocated: %dB (config) + %dKB (weights) + %dKB (data)\n",0, weightsize / 1024, datasize / 1024);
-  printf("region: %lu – %lu\n", (long)SHARED_DRAM, (long)(SHARED_DRAM + total_size));
-//
-//  if (DRAM_DEPTH != (int)(total_size / sizeof(data_t))) {
-//    printf("\n\n!! ERROR !!\n");
-//    printf("No big deal, but please set DRAM_DEPTH = %d in network.hpp\n\n",
-//           (int)(total_size / sizeof(data_t)));
-//    exit(-1);
-//  }
+  printf("     Bytes allocated: %dB (config) + %dKB (weights) + %dKB (data)\n",
+         0, weightsize / 1024, datasize / 1024);
+  printf("     region: %lu – %lu\n", (long)SHARED_DRAM, (long)(SHARED_DRAM + total_size));
 }
 
-
-
+// =====================================================
+// = Copy Layer Config + Weights to FPGA (shared DRAM) =
+// =====================================================
 void copy_config_to_FPGA(network_t *net_CPU) {
+  // int configsize = net_CPU->num_layers * sizeof(layer_t);
+  // int configsize = net_CPU->num_layers * (NUM_FLOATS_PER_LAYER *
+  // sizeof(float));
   int weightsize = net_CPU->num_weights * sizeof(data_t);
+
   // Info:
   printf("CPU: Copy Config + Weights to FPGA DRAM:\n");
  printf("     %dB (config) + %dKB (weights)\n", 0, weightsize / 1024);
   printf("     %dB (config) + %dkB (weights)\n", 0, weightsize / 1000);
+  // Copy Layer Config:
+  // memcpy(SHARED_DRAM_LAYER_CONFIG, net_CPU->layers, configsize);
+  /*for (int l = 0; l < net_CPU->num_layers; l++) {
+   layer_to_floats(net_CPU->layers[l],
+   &SHARED_DRAM_LAYER_CONFIG[l * NUM_FLOATS_PER_LAYER]);
+   }*/
+
+  // Copy Weights:
   memcpy(SHARED_DRAM_WEIGHTS, net_CPU->weights, weightsize);
 }
 
+// ======================================
+// = Load Input Data from prepared File =
+// ======================================
 // Loads input_image with data from given file
 // (prepared input file using convert_image.py)
 void load_prepared_input_image(data_t *input_image, const char *filename,
@@ -138,7 +178,9 @@ void load_prepared_input_image(data_t *input_image, const char *filename,
   fclose(infile);
 }
 
-
+// ==========================================
+// = Copy Input Image to FPGA (shared DRAM) =
+// ==========================================
 void copy_input_image_to_FPGA(network_t *net_CPU, data_t *image) {
   // Input Data goes into Layer 0:
   int win = net_CPU->layers[0].width;
@@ -153,7 +195,12 @@ void copy_input_image_to_FPGA(network_t *net_CPU, data_t *image) {
   memcpy(SHARED_DRAM_DATA, image, input_img_size);
 }
 
-
+// =============================================
+// = Copy Results back from FPGA (shared DRAM) =
+// =============================================
+// Assumption: Last Layer reduces data to dimensions 1x1xch_out (global pool)
+// Assumption: Output Data is written back to where initial image was placed
+// data_t *results: Pointer to data_t array with enough space to hold results
 void copy_results_from_FPGA(network_t *net_CPU, data_t *results, int ch_out) {
   // Verify that last layer reduces spatial dimensions to 1x1:
   assert(net_CPU->layers[net_CPU->num_layers - 1].global_pool == true);
@@ -168,7 +215,13 @@ void copy_results_from_FPGA(network_t *net_CPU, data_t *results, int ch_out) {
   memcpy(results, SHARED_DRAM_DATA + result_offset, result_size);
 }
 
-void calculate_softmax(network_t *net_CPU, data_t *results,std::vector<std::pair<data_t, int> > &probabilities) {
+// ===========================================
+// = Calculate Softmax from Raw FPGA Results =
+// ===========================================
+void calculate_softmax(network_t *net_CPU, data_t *results,
+                       std::vector<std::pair<data_t, int> > &probabilities) {
+  // First, finish Global AVG Pooling (FPGA does just accumulation, no division)
+  // Divide by WxH of Output Maps:
   layer_t *final = &net_CPU->layers[net_CPU->num_layers - 1];
   data_t num_output_pixels = final->width * final->height;
   if (final->stride == 2) num_output_pixels /= 4;
@@ -206,33 +259,16 @@ void calculate_softmax(network_t *net_CPU, data_t *results,std::vector<std::pair
   std::sort(probabilities.begin(), probabilities.end());
   std::reverse(probabilities.begin(), probabilities.end());
 }
-
-
-void load_image_file(data_t *input_image, const char *filename, int win,int hin, int chin) {
-  
-  
-  
-  }
-
-
-// void do_preprocess(data_t *input_image, int win, int hin, int chin) {
-//   for (int y = 0; y < hin; y++) {
-//     for (int x = 0; x < win; x++) {
-//       // Subtract Mean Pixel (defined in network.hpp)
-//       input_image[y * win * chin + x * chin + 0] -= MEAN_R;
-//       input_image[y * win * chin + x * chin + 1] -= MEAN_G;
-//       input_image[y * win * chin + x * chin + 2] -= MEAN_B;
-//     }
-//   }
-// }
-
+// =======================================================================
+// = Setup Network (Allocate Shared Memory, Copy Layer Config + Weights) =
+// =======================================================================
 void setup_FPGA(network_t *net_CPU) {
-
+  // Print Network Config
   printf("\n\nCPU: Network Setup:\n=====================\n\n");
   print_layers(net_CPU);
   printf("\n");
-
+  // Setup FPGA DRAM Memory (Config, Weights, Data Sections)
   allocate_FPGA_memory(net_CPU);
+  // Copy Network Config (Layer Config, Weights)
   copy_config_to_FPGA(net_CPU);
-
 }

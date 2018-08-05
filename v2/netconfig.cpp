@@ -6,9 +6,7 @@
 //
 //  addLayer(), loadWeightsFromFile(), print_layer(), print_layers()
 //
-//	(c) David Gschwend, 2016
-//
-//------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
 
 #include "network.hpp"
 #include "netconfig.hpp"
