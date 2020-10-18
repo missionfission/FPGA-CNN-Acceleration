@@ -1,4 +1,4 @@
-# FPGA-Acceleration
+# High Level Synthesis for FPGA-Acceleration of CNNs using Vivado HLS
 
 ## Layers Supported 
 ### 1. Convolution kernel size : 3x3 and 1x1
